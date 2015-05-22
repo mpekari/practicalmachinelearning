@@ -45,7 +45,7 @@ modelFit <- train(classe~.,data=trainingSet.small,method="rf",
                 prox=TRUE)
 ```
 
-The final model had about 0.9865 accuracy, which is a very good result. 
+The final model has about 0.9865 accuracy.
 
 ```{r eval=FALSE}
 print(modelFit)
@@ -74,6 +74,8 @@ Accuracy was used to select the optimal model using  the largest value.
 The final value used for the model was mtry = 27.
 ")
 ```
+
+The out of sample error rate estimated using the the 5 folds is 1.05%.   
 
 ```{r eval=FALSE}
 print(modelFit$finalModel)

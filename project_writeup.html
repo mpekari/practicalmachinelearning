@@ -77,7 +77,7 @@ trainingSet.small &lt;- trainingSet[partition,]</code></pre>
 <pre class="r"><code>modelFit &lt;- train(classe~.,data=trainingSet.small,method=&quot;rf&quot;,
                 trControl=trainControl(method=&quot;cv&quot;,number=5, verboseIter=TRUE),
                 prox=TRUE)</code></pre>
-<p>The final model had about 0.9865 accuracy, which is a very good result.</p>
+<p>The final model has about 0.9865 accuracy.</p>
 <pre class="r"><code>print(modelFit)</code></pre>
 <pre><code>## Random Forest 
 ## 
@@ -99,6 +99,7 @@ trainingSet.small &lt;- trainingSet[partition,]</code></pre>
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.</code></pre>
+<p>The out of sample error rate estimated using the the 5 folds is 1.05%.</p>
 <pre class="r"><code>print(modelFit$finalModel)</code></pre>
 <pre><code>## Call:
 ##  randomForest(x = x, y = y, mtry = param$mtry, proximity = TRUE) 
