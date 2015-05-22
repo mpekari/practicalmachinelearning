@@ -1,0 +1,99 @@
+---
+title: "Practical Machine Learning - Project Submission"
+author: "mpekari"
+date: "Friday, May 22, 2015"
+output: html_document
+---
+
+This document is the project submission for Coursera.org Practical Machine Learning course. 
+
+I used the caret package and random forest method for fitting the model. 
+
+```{r eval=FALSE}
+library(caret)
+library(randomForest)
+```
+
+I loaded the datasets and marked missing values as NA. 
+
+```{r eval=FALSE}
+trainingSet <- read.csv(file = "pml-training.csv", na.strings=c("NA","#DIV/0!",""))
+testSet <- read.csv(file = "pml-testing.csv", na.strings=c("NA","#DIV/0!",""))
+```
+
+I removed the first 7 columns (username, timestamps, etc.) as they did not have sensor data. I also removed columns that had mostly NA values. 
+
+```{r eval=FALSE}
+trainingSet <- trainingSet[,-(1:7)]
+na_columns <- apply(is.na(trainingSet), 2, sum) > 19000
+trainingSet <- trainingSet[,!na_columns]
+```
+
+I selected only 50% of the training data for fitting the model, so that the fitting would complete in reasonable time with my computer. 
+
+```{r eval=FALSE}
+set.seed(4378)
+partition <- createDataPartition(y=trainingSet$classe,p=0.5,list=FALSE)
+trainingSet.small <- trainingSet[partition,]
+```
+
+I fitted the model using the random forest method and 5-fold cross-validation. I used only 5 folds for performance reasons.
+
+```{r eval=FALSE}
+modelFit <- train(classe~.,data=trainingSet.small,method="rf",
+                trControl=trainControl(method="cv",number=5, verboseIter=TRUE),
+                prox=TRUE)
+```
+
+The final model had about 0.9865 accuracy, which is a very good result. 
+
+```{r eval=FALSE}
+print(modelFit)
+```
+
+```{r echo=FALSE}
+cat("Random Forest 
+
+9812 samples
+  52 predictor
+   5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+
+Summary of sample sizes: 7851, 7850, 7849, 7849, 7849 
+
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa      Accuracy SD  Kappa SD   
+   2    0.9850191  0.9810448  0.004420207  0.005595374
+  27    0.9865475  0.9829826  0.003575824  0.004521962
+  52    0.9799229  0.9746009  0.003970556  0.005024378
+
+Accuracy was used to select the optimal model using  the largest value.
+The final value used for the model was mtry = 27.
+")
+```
+
+```{r eval=FALSE}
+print(modelFit$finalModel)
+```
+
+```{r echo=FALSE}
+
+cat("Call:
+ randomForest(x = x, y = y, mtry = param$mtry, proximity = TRUE) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 27
+
+        OOB estimate of  error rate: 1.05%
+Confusion matrix:
+     A    B    C    D    E class.error
+A 2782    5    2    0    1 0.002867384
+B   15 1869   15    0    0 0.015797788
+C    0   15 1689    7    0 0.012857978
+D    0    1   27 1579    1 0.018034826
+E    0    0    5    9 1790 0.007760532
+")
+```
